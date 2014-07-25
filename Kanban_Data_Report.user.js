@@ -3,7 +3,7 @@
 // @namespace   de.mobile.greasemonkey.jira.kanbandata
 // @description Parses the info how long the Jira ticket displayed on the browser stayed in which column of the Kanban board and displays the aggregated data on the "History" tab
 // @include     https://jira.corp.mobile.de/jira/browse/*
-// @version     6
+// @version     7
 // @grant       none
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
@@ -13,6 +13,7 @@
  * ===============
  *
  * v6, 2012-09-12 - added columns for project "MTK"
+ * v7, 2014-07-25 - update for Jira project EZE
  */
 
 /* Fix for Greasemonkey 1.0 bug, see http://www.greasespot.net/2012/08/greasemonkey-10-jquery-broken-with.html */
@@ -24,6 +25,21 @@ this.$ = this.jQuery = jQuery.noConflict(true);
  * go that were successfully completed, otherwise the lead time won't be
  * shown correctly */
 var columns = {
+    "EZE": {
+        "Open": { name: "Backlog", stage: "Open", cssClass: "kanbanHistoryOpen" },
+        "Ready For Development": { name: "Ready For Dev", stage: "Open", cssClass: "kanbanHistoryOpen" },
+        "On Hold": { name: "Blocked", stage: "Open", cssClass: "kanbanHistoryOpen" },
+        "Blocked": { name: "Blocked", stage: "Open", cssClass: "kanbanHistoryOpen" },
+        "In Frontend Development": { name: "[DEV] In Progress", stage: "In Progress", cssClass: "kanbanHistoryInProgress" },
+        "In Progress": { name: "[DEV] In Progress", stage: "In Progress", cssClass: "kanbanHistoryInProgress" },
+        "Resolved": { name: "[DEV] Ready for QA", stage: "QA", cssClass: "kanbanHistoryQA" },
+        "Ready for QA": { name: "[DEV] Ready for QA", stage: "QA", cssClass: "kanbanHistoryQA" },
+        "QA": { name: "[DEV] In QA", stage: "QA", cssClass: "kanbanHistoryQA" },
+        "Ready for Deployment": { name: "Ready to Rock", stage: "Done", cssClass: "kanbanHistoryDone" },
+        "Test On Prod": { name: "Test On Prod", stage: "Done", cssClass: "kanbanHistoryDone" },
+        "Rejected": { name: "Done (rejected)", stage: "Done", cssClass: "kanbanHistoryRejected" },
+        "Closed": { name: "Done", stage: "Done", cssClass: "kanbanHistoryDone" }
+    },
     "SDR": {
         "Open": { name: "Preparing", stage: "Open", cssClass: "kanbanHistoryOpen" },
         "Assigned": { name: "Preparing (assigned)", stage: "Open", cssClass: "kanbanHistoryOpen" },
@@ -237,10 +253,10 @@ $(document).ready(function() {
     
     /* build the table with summary items */
     var summaries = [
-        { label: "Total \"Open\”: ", value: totalOpen, cssClass: "kanbanHistoryOpenTotal", width: totalOpen > 0 ? Math.ceil(totalOpen / maxDuration * barWidth) : undefined },
-        { label: "Total \"In Progress\”: ", value: totalInProgress, cssClass: "kanbanHistoryInProgressTotal", width: totalInProgress > 0 ? Math.ceil(totalInProgress / maxDuration * barWidth) : undefined },
-        { label: "Total \"QA\”: ", value: totalQA, cssClass: isRejected ? "kanbanHistoryLeadTimeNA" : "kanbanHistoryQATotal", width: totalQA > 0 ? Math.ceil(totalQA / maxDuration * barWidth) : undefined },
-        { label: "Total \"Done\”: ", value: totalDone, cssClass: isRejected ? "kanbanHistoryLeadTimeNA" : "kanbanHistoryDoneTotal", width: totalDone > 0 ? Math.ceil(totalDone / maxDuration * barWidth) : undefined },
+        { label: "Total \"Open\": ", value: totalOpen, cssClass: "kanbanHistoryOpenTotal", width: totalOpen > 0 ? Math.ceil(totalOpen / maxDuration * barWidth) : undefined },
+        { label: "Total \"In Progress\": ", value: totalInProgress, cssClass: "kanbanHistoryInProgressTotal", width: totalInProgress > 0 ? Math.ceil(totalInProgress / maxDuration * barWidth) : undefined },
+        { label: "Total \"QA\": ", value: totalQA, cssClass: isRejected ? "kanbanHistoryLeadTimeNA" : "kanbanHistoryQATotal", width: totalQA > 0 ? Math.ceil(totalQA / maxDuration * barWidth) : undefined },
+        { label: "Total \"Done\": ", value: totalDone, cssClass: isRejected ? "kanbanHistoryLeadTimeNA" : "kanbanHistoryDoneTotal", width: totalDone > 0 ? Math.ceil(totalDone / maxDuration * barWidth) : undefined },
         { label: "Lead time: ", value: leadTime, cssClass: isDone && !isRejected ? "kanbanHistoryLeadTime" : "kanbanHistoryLeadTimeNA" }
     ];
     $.each(summaries, function(index, item) {
@@ -386,12 +402,4 @@ function addCss(css) {
     $("head")[0].appendChild(newCss);
 }
 
-function addFavicon(url) {
-    var link = document.createElement("link");
-
-    link.type = "image/x-icon";
-    link.rel = "shortcut icon";
-    link.href = url;
-    $("head")[0].appendChild(link);
-}
 
