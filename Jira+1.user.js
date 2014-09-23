@@ -16,9 +16,9 @@ AJS.$(document).ready(function() {
         help = window.location.href.split("-"); 
         if (help.length >= 2) {
             if (direction === "+1") { 
-	       	number = parseInt(help[1], 10) +1;         	
+	       	number = parseInt(help[1], 10) + 1;         	
             } else {
-               	number = parseInt(help[1], 10) -1;
+               	number = parseInt(help[1], 10) - 1;
             }
             newURL = help[0] + "-" + number;  
             window.location.href = newURL; 
