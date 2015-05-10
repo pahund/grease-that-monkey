@@ -24,3 +24,11 @@ Modifications for the mobile.de Scrum of Scrums Rapid Board in Jira - colors tic
 ## Kanban Data Report
 
 Parses the info how long the Jira ticket displayed on the browser stayed in which column of the Kanban board and displays the aggregated data on the "History" tab
+
+## Epics and Integras
+
+Shows the linked epic ticket and integration system this ticket is deployed to as sticky on a card on the Jira Rapid board.
+
+## Mark blocked tickets
+
+Changes the background color to nice red if the field "blocking reason" is set and displays an marking icon that will show the reason on a (very simple) overlay on mouseover.
